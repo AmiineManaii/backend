@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gameart.backend.entity.Game;
+import com.gameart.backend.dto.ApiResponse;
+import com.gameart.backend.dto.GameDTO;
 import com.gameart.backend.service.GameService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/games")
@@ -33,91 +35,86 @@ public class GameController {
 
     @GetMapping
     @Operation(summary = "Obtenir tous les jeux")
-    public List<Game> getAllGames() {
-        return gameService.findAll();
+    public ApiResponse<List<GameDTO>> getAllGames() {
+        List<GameDTO> games = gameService.findAll();
+        return ApiResponse.success("Jeux récupérés avec succès", games);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtenir un jeu par son ID")
-    public ResponseEntity<Game> getGameById(@PathVariable String id) {
-        Optional<Game> game = gameService.findById(id);
-        return game.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ApiResponse<GameDTO>> getGameById(@PathVariable String id) {
+        Optional<GameDTO> game = gameService.findById(id);
+        return game.map(g -> ResponseEntity.ok(ApiResponse.success("Jeu trouvé", g)))
+                  .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/platform/{platform}")
     @Operation(summary = "Obtenir les jeux par plateforme")
-    public List<Game> getGamesByPlatform(@PathVariable String platform) {
-        return gameService.findByPlatform(platform);
+    public ApiResponse<List<GameDTO>> getGamesByPlatform(@PathVariable String platform) {
+        List<GameDTO> games = gameService.findByPlatform(platform);
+        return ApiResponse.success("Jeux par plateforme récupérés", games);
     }
 
     @GetMapping("/genre/{genre}")
     @Operation(summary = "Obtenir les jeux par genre")
-    public List<Game> getGamesByGenre(@PathVariable String genre) {
-        return gameService.findByGenre(genre);
+    public ApiResponse<List<GameDTO>> getGamesByGenre(@PathVariable String genre) {
+        List<GameDTO> games = gameService.findByGenre(genre);
+        return ApiResponse.success("Jeux par genre récupérés", games);
     }
 
     @GetMapping("/promo")
     @Operation(summary = "Obtenir les jeux en promotion")
-    public List<Game> getPromoGames() {
-        return gameService.findByPromoTrue();
+    public ApiResponse<List<GameDTO>> getPromoGames() {
+        List<GameDTO> games = gameService.findByPromoTrue();
+        return ApiResponse.success("Jeux en promotion récupérés", games);
     }
 
     @GetMapping("/popular")
     @Operation(summary = "Obtenir les jeux populaires")
-    public List<Game> getPopularGames() {
-        return gameService.findByPopularTrue();
+    public ApiResponse<List<GameDTO>> getPopularGames() {
+        List<GameDTO> games = gameService.findByPopularTrue();
+        return ApiResponse.success("Jeux populaires récupérés", games);
     }
 
     @GetMapping("/search")
     @Operation(summary = "Rechercher des jeux")
-    public List<Game> searchGames(@RequestParam String q) {
-        return gameService.searchGames(q);
+    public ApiResponse<List<GameDTO>> searchGames(@RequestParam String q) {
+        List<GameDTO> games = gameService.searchGames(q);
+        return ApiResponse.success("Résultats de recherche récupérés", games);
     }
 
     @GetMapping("/tag/{tag}")
     @Operation(summary = "Obtenir les jeux par tag")
-    public List<Game> getGamesByTag(@PathVariable String tag) {
-        return gameService.findByTag(tag);
+    public ApiResponse<List<GameDTO>> getGamesByTag(@PathVariable String tag) {
+        List<GameDTO> games = gameService.findByTag(tag);
+        return ApiResponse.success("Jeux par tag récupérés", games);
     }
 
     @PostMapping
     @Operation(summary = "Créer un nouveau jeu")
-    public Game createGame(@RequestBody Game game) {
-        return gameService.save(game);
+    public ApiResponse<GameDTO> createGame(@Valid @RequestBody GameDTO gameDTO) {
+        GameDTO savedGame = gameService.save(gameDTO);
+        return ApiResponse.success("Jeu créé avec succès", savedGame);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Mettre à jour un jeu")
-    public ResponseEntity<Game> updateGame(@PathVariable String id, @RequestBody Game gameDetails) {
-        Optional<Game> optionalGame = gameService.findById(id);
-        if (optionalGame.isPresent()) {
-            Game game = optionalGame.get();
-            // Mise à jour des champs
-            game.setTitle(gameDetails.getTitle());
-            game.setPlatform(gameDetails.getPlatform());
-            game.setGenre(gameDetails.getGenre());
-            game.setPrice(gameDetails.getPrice());
-            game.setRating(gameDetails.getRating());
-            game.setReleaseDate(gameDetails.getReleaseDate());
-            game.setStock(gameDetails.getStock());
-            game.setDescription(gameDetails.getDescription());
-            game.setCoverImage(gameDetails.getCoverImage());
-            game.setImages(gameDetails.getImages());
-            game.setUrlTrailer(gameDetails.getUrlTrailer());
-            game.setPromo(gameDetails.getPromo());
-            game.setPopular(gameDetails.getPopular());
-            game.setTags(gameDetails.getTags());
-            return ResponseEntity.ok(gameService.save(game));
+    public ResponseEntity<ApiResponse<GameDTO>> updateGame(@PathVariable String id, @Valid @RequestBody GameDTO gameDetails) {
+        if (!gameService.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        
+        gameDetails.setId(id);
+        GameDTO updatedGame = gameService.save(gameDetails);
+        return ResponseEntity.ok(ApiResponse.success("Jeu mis à jour avec succès", updatedGame));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Supprimer un jeu")
-    public ResponseEntity<Void> deleteGame(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Void>> deleteGame(@PathVariable String id) {
         if (gameService.existsById(id)) {
             gameService.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(ApiResponse.success("Jeu supprimé avec succès", null));
         }
         return ResponseEntity.notFound().build();
     }

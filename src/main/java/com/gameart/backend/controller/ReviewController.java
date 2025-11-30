@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gameart.backend.entity.Review;
+import com.gameart.backend.dto.ApiResponse;
+import com.gameart.backend.dto.ReviewDTO;
 import com.gameart.backend.service.ReviewService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/reviews")
@@ -33,72 +35,74 @@ public class ReviewController {
 
     @GetMapping
     @Operation(summary = "Obtenir tous les avis")
-    public List<Review> getAllReviews() {
-        return reviewService.findAll();
+    public ApiResponse<List<ReviewDTO>> getAllReviews() {
+        List<ReviewDTO> reviews = reviewService.findAll();
+        return ApiResponse.success("Avis récupérés avec succès", reviews);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtenir un avis par son ID")
-    public ResponseEntity<Review> getReviewById(@PathVariable String id) {
-        Optional<Review> review = reviewService.findById(id);
-        return review.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ApiResponse<ReviewDTO>> getReviewById(@PathVariable String id) {
+        Optional<ReviewDTO> review = reviewService.findById(id);
+        return review.map(r -> ResponseEntity.ok(ApiResponse.success("Avis trouvé", r)))
+                    .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/game/{gameId}")
     @Operation(summary = "Obtenir les avis d'un jeu")
-    public List<Review> getReviewsByGameId(@PathVariable String gameId) {
-        return reviewService.findByGameId(gameId);
+    public ApiResponse<List<ReviewDTO>> getReviewsByGameId(@PathVariable String gameId) {
+        List<ReviewDTO> reviews = reviewService.findByGameId(gameId);
+        return ApiResponse.success("Avis du jeu récupérés", reviews);
     }
 
     @GetMapping("/user/{userId}")
     @Operation(summary = "Obtenir les avis d'un utilisateur")
-    public List<Review> getReviewsByUserId(@PathVariable String userId) {
-        return reviewService.findByUserId(userId);
+    public ApiResponse<List<ReviewDTO>> getReviewsByUserId(@PathVariable String userId) {
+        List<ReviewDTO> reviews = reviewService.findByUserId(userId);
+        return ApiResponse.success("Avis utilisateur récupérés", reviews);
     }
 
     @GetMapping("/verified")
     @Operation(summary = "Obtenir les avis vérifiés")
-    public List<Review> getVerifiedReviews() {
-        return reviewService.findByVerifiedTrue();
+    public ApiResponse<List<ReviewDTO>> getVerifiedReviews() {
+        List<ReviewDTO> reviews = reviewService.findByVerifiedTrue();
+        return ApiResponse.success("Avis vérifiés récupérés", reviews);
     }
 
     @PostMapping
     @Operation(summary = "Créer un nouvel avis")
-    public Review createReview(@RequestBody Review review) {
-        return reviewService.save(review);
+    public ApiResponse<ReviewDTO> createReview(@Valid @RequestBody ReviewDTO reviewDTO) {
+        ReviewDTO savedReview = reviewService.save(reviewDTO);
+        return ApiResponse.success("Avis créé avec succès", savedReview);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Mettre à jour un avis")
-    public ResponseEntity<Review> updateReview(@PathVariable String id, @RequestBody Review reviewDetails) {
-        Optional<Review> optionalReview = reviewService.findById(id);
-        if (optionalReview.isPresent()) {
-            Review review = optionalReview.get();
-            review.setGameId(reviewDetails.getGameId());
-            review.setUserId(reviewDetails.getUserId());
-            review.setMsg(reviewDetails.getMsg());
-            review.setNote(reviewDetails.getNote());
-            review.setDate(reviewDetails.getDate());
-            review.setVerified(reviewDetails.getVerified());
-            return ResponseEntity.ok(reviewService.save(review));
+    public ResponseEntity<ApiResponse<ReviewDTO>> updateReview(@PathVariable String id, @Valid @RequestBody ReviewDTO reviewDetails) {
+        if (!reviewService.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        
+        reviewDetails.setId(id);
+        ReviewDTO updatedReview = reviewService.save(reviewDetails);
+        return ResponseEntity.ok(ApiResponse.success("Avis mis à jour avec succès", updatedReview));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Supprimer un avis")
-    public ResponseEntity<Void> deleteReview(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable String id) {
         if (reviewService.existsById(id)) {
             reviewService.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(ApiResponse.success("Avis supprimé avec succès", null));
         }
         return ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/{id}/verify")
     @Operation(summary = "Marquer un avis comme vérifié")
-    public ResponseEntity<Review> verifyReview(@PathVariable String id) {
-        Optional<Review> review = reviewService.verifyReview(id);
-        return review.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ApiResponse<ReviewDTO>> verifyReview(@PathVariable String id) {
+        Optional<ReviewDTO> review = reviewService.verifyReview(id);
+        return review.map(r -> ResponseEntity.ok(ApiResponse.success("Avis vérifié avec succès", r)))
+                    .orElse(ResponseEntity.notFound().build());
     }
 }

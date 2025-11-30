@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gameart.backend.entity.Address;
+import com.gameart.backend.dto.AddressDTO;
+import com.gameart.backend.dto.ApiResponse;
 import com.gameart.backend.service.AddressService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/addresses")
@@ -33,65 +35,60 @@ public class AddressController {
 
     @GetMapping
     @Operation(summary = "Obtenir toutes les adresses")
-    public List<Address> getAllAddresses() {
-        return addressService.findAll();
+    public ApiResponse<List<AddressDTO>> getAllAddresses() {
+        List<AddressDTO> addresses = addressService.findAll();
+        return ApiResponse.success("Adresses récupérées avec succès", addresses);
     }
-
-    
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtenir une adresse par son ID")
-    public ResponseEntity<Address> getAddressById(@PathVariable String id) {
-        Optional<Address> address = addressService.findById(id);
-        return address.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ApiResponse<AddressDTO>> getAddressById(@PathVariable String id) {
+        Optional<AddressDTO> address = addressService.findById(id);
+        return address.map(a -> ResponseEntity.ok(ApiResponse.success("Adresse trouvée", a)))
+                     .orElse(ResponseEntity.notFound().build());
     }
-
-
 
     @GetMapping("/user/{userId}")
     @Operation(summary = "Obtenir les adresses d'un utilisateur")
-    public List<Address> getAddressesByUserId(@PathVariable String userId) {
-        return addressService.findByUserId(userId);
+    public ApiResponse<List<AddressDTO>> getAddressesByUserId(@PathVariable String userId) {
+        List<AddressDTO> addresses = addressService.findByUserId(userId);
+        return ApiResponse.success("Adresses utilisateur récupérées", addresses);
     }
 
     @PostMapping
     @Operation(summary = "Créer une nouvelle adresse")
-    public Address createAddress(@RequestBody Address address) {
-        return addressService.save(address);
+    public ApiResponse<AddressDTO> createAddress(@Valid @RequestBody AddressDTO addressDTO) {
+        AddressDTO savedAddress = addressService.save(addressDTO);
+        return ApiResponse.success("Adresse créée avec succès", savedAddress);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Mettre à jour une adresse")
-    public ResponseEntity<Address> updateAddress(@PathVariable String id, @RequestBody Address addressDetails) {
-        Optional<Address> optionalAddress = addressService.findById(id);
-        if (optionalAddress.isPresent()) {
-            Address address = optionalAddress.get();
-            address.setNom(addressDetails.getNom());
-            address.setRue(addressDetails.getRue());
-            address.setVille(addressDetails.getVille());
-            address.setCodePostal(addressDetails.getCodePostal());
-            address.setPays(addressDetails.getPays());
-            address.setUserId(addressDetails.getUserId());
-            address.setIsDefault(addressDetails.getIsDefault());
-            return ResponseEntity.ok(addressService.save(address));
+    public ResponseEntity<ApiResponse<AddressDTO>> updateAddress(@PathVariable String id, @Valid @RequestBody AddressDTO addressDetails) {
+        if (!addressService.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        
+        addressDetails.setId(id); 
+        AddressDTO updatedAddress = addressService.save(addressDetails);
+        return ResponseEntity.ok(ApiResponse.success("Adresse mise à jour avec succès", updatedAddress));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Supprimer une adresse")
-    public ResponseEntity<Void> deleteAddress(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Void>> deleteAddress(@PathVariable String id) {
         if (addressService.existsById(id)) {
             addressService.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(ApiResponse.success("Adresse supprimée avec succès", null));
         }
         return ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/{id}/default")
     @Operation(summary = "Définir une adresse comme par défaut")
-    public ResponseEntity<Address> setDefaultAddress(@PathVariable String id) {
-        Optional<Address> address = addressService.setAsDefault(id);
-        return address.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ApiResponse<AddressDTO>> setDefaultAddress(@PathVariable String id) {
+        Optional<AddressDTO> address = addressService.setAsDefault(id);
+        return address.map(a -> ResponseEntity.ok(ApiResponse.success("Adresse définie comme par défaut", a)))
+                     .orElse(ResponseEntity.notFound().build());
     }
 }

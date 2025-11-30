@@ -2,35 +2,47 @@ package com.gameart.backend.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.gameart.backend.dto.UserDTO;
 import com.gameart.backend.entity.User;
+import com.gameart.backend.mapper.GlobalMapper;
 import com.gameart.backend.repository.UserRepository;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final GlobalMapper mapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, GlobalMapper mapper) {
         this.userRepository = userRepository;
+        this.mapper = mapper;
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDTO> findAll() {
+        return userRepository.findAll()
+                .stream()
+                .map(mapper::toSecureUserDto) 
+                .collect(Collectors.toList());
     }
 
-    public Optional<User> findById(String id) {
-        return userRepository.findById(id);
+    public Optional<UserDTO> findById(String id) {
+        return userRepository.findById(id)
+                .map(mapper::toSecureUserDto);
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<UserDTO> findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(mapper::toSecureUserDto);
     }
 
-    public User save(User user) {
-        return userRepository.save(user);
+    public UserDTO save(UserDTO userDTO) {
+        User user = mapper.toUserEntity(userDTO);
+        User savedUser = userRepository.save(user);
+        return mapper.toSecureUserDto(savedUser);
     }
 
     public void deleteById(String id) {
@@ -45,25 +57,27 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    public Optional<User> addToWishlist(String userId, String gameId) {
+    public Optional<UserDTO> addToWishlist(String userId, String gameId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (!user.getWishlist().contains(gameId)) {
                 user.getWishlist().add(gameId);
-                return Optional.of(userRepository.save(user));
+                User savedUser = userRepository.save(user);
+                return Optional.of(mapper.toSecureUserDto(savedUser));
             }
-            return optionalUser;
+            return Optional.of(mapper.toSecureUserDto(user));
         }
         return Optional.empty();
     }
 
-    public Optional<User> removeFromWishlist(String userId, String gameId) {
+    public Optional<UserDTO> removeFromWishlist(String userId, String gameId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.getWishlist().remove(gameId);
-            return Optional.of(userRepository.save(user));
+            User savedUser = userRepository.save(user);
+            return Optional.of(mapper.toSecureUserDto(savedUser));
         }
         return Optional.empty();
     }

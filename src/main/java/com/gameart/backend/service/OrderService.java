@@ -2,35 +2,49 @@ package com.gameart.backend.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.gameart.backend.dto.OrderDTO;
 import com.gameart.backend.entity.Order;
+import com.gameart.backend.mapper.GlobalMapper;
 import com.gameart.backend.repository.OrderRepository;
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final GlobalMapper mapper;
 
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, GlobalMapper mapper) {
         this.orderRepository = orderRepository;
+        this.mapper = mapper;
     }
 
-    public List<Order> findAll() {
-        return orderRepository.findAll();
+    public List<OrderDTO> findAll() {
+        return orderRepository.findAll()
+                .stream()
+                .map(mapper::toOrderDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Order> findById(Long id) {
-        return orderRepository.findById(id);
+    public Optional<OrderDTO> findById(Long id) {
+        return orderRepository.findById(id)
+                .map(mapper::toOrderDto);
     }
 
-    public List<Order> findByUserId(String userId) {
-        return orderRepository.findByUserId(userId);
+    public List<OrderDTO> findByUserId(String userId) {
+        return orderRepository.findByUserId(userId)
+                .stream()
+                .map(mapper::toOrderDto)
+                .collect(Collectors.toList());
     }
 
-    public Order save(Order order) {
-        return orderRepository.save(order);
+    public OrderDTO save(OrderDTO orderDTO) {
+        Order order = mapper.toOrderEntity(orderDTO);
+        Order savedOrder = orderRepository.save(order);
+        return mapper.toOrderDto(savedOrder);
     }
 
     public void deleteById(Long id) {
@@ -41,12 +55,13 @@ public class OrderService {
         return orderRepository.existsById(id);
     }
 
-    public Optional<Order> updateStatus(Long id, String status) {
+    public Optional<OrderDTO> updateStatus(Long id, String status) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
             order.setStatus(status);
-            return Optional.of(orderRepository.save(order));
+            Order savedOrder = orderRepository.save(order);
+            return Optional.of(mapper.toOrderDto(savedOrder));
         }
         return Optional.empty();
     }

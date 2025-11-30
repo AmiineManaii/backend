@@ -1,31 +1,43 @@
 package com.gameart.backend.service;
 
-import com.gameart.backend.entity.Cart;
-import com.gameart.backend.repository.CartRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.gameart.backend.dto.CartDTO;
+import com.gameart.backend.entity.Cart;
+import com.gameart.backend.mapper.GlobalMapper;
+import com.gameart.backend.repository.CartRepository;
 
 @Service
 public class CartService {
 
     private final CartRepository cartRepository;
+    private final GlobalMapper mapper;
 
-    public CartService(CartRepository cartRepository) {
+    public CartService(CartRepository cartRepository, GlobalMapper mapper) {
         this.cartRepository = cartRepository;
+        this.mapper = mapper;
     }
 
-    public List<Cart> findAll() {
-        return cartRepository.findAll();
+    public List<CartDTO> findAll() {
+        return cartRepository.findAll()
+                .stream()
+                .map(mapper::toCartDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Cart> findById(Long id) {
-        return cartRepository.findById(id);
+    public Optional<CartDTO> findById(Long id) {
+        return cartRepository.findById(id)
+                .map(mapper::toCartDto);
     }
 
-    public Cart save(Cart cart) {
-        return cartRepository.save(cart);
+    public CartDTO save(CartDTO cartDTO) {
+        Cart cart = mapper.toCartEntity(cartDTO);
+        Cart savedCart = cartRepository.save(cart);
+        return mapper.toCartDto(savedCart);
     }
 
     public void deleteById(Long id) {

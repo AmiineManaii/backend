@@ -2,43 +2,63 @@ package com.gameart.backend.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.gameart.backend.dto.ReviewDTO;
 import com.gameart.backend.entity.Review;
+import com.gameart.backend.mapper.GlobalMapper;
 import com.gameart.backend.repository.ReviewRepository;
 
 @Service
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final GlobalMapper mapper;
 
-    public ReviewService(ReviewRepository reviewRepository) {
+    public ReviewService(ReviewRepository reviewRepository, GlobalMapper mapper) {
         this.reviewRepository = reviewRepository;
+        this.mapper = mapper;
     }
 
-    public List<Review> findAll() {
-        return reviewRepository.findAll();
+    public List<ReviewDTO> findAll() {
+        return reviewRepository.findAll()
+                .stream()
+                .map(mapper::toReviewDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Review> findById(String id) {
-        return reviewRepository.findById(id);
+    public Optional<ReviewDTO> findById(String id) {
+        return reviewRepository.findById(id)
+                .map(mapper::toReviewDto);
     }
 
-    public List<Review> findByGameId(String gameId) {
-        return reviewRepository.findByGameId(gameId);
+    public List<ReviewDTO> findByGameId(String gameId) {
+        return reviewRepository.findByGameId(gameId)
+                .stream()
+                .map(mapper::toReviewDto)
+                .collect(Collectors.toList());
     }
 
-    public List<Review> findByUserId(String userId) {
-        return reviewRepository.findByUserId(userId);
+    public List<ReviewDTO> findByUserId(String userId) {
+        return reviewRepository.findByUserId(userId)
+                .stream()
+                .map(mapper::toReviewDto)
+                .collect(Collectors.toList());
     }
 
-    public List<Review> findByVerifiedTrue() {
-        return reviewRepository.findByVerifiedTrue();
+    public List<ReviewDTO> findByVerifiedTrue() {
+        return reviewRepository.findByVerifiedTrue()
+                .stream()
+                .map(mapper::toReviewDto)
+                .collect(Collectors.toList());
     }
 
-    public Review save(Review review) {
-        return reviewRepository.save(review);
+    public ReviewDTO save(ReviewDTO reviewDTO) {
+        Review review = mapper.toReviewEntity(reviewDTO);
+        Review savedReview = reviewRepository.save(review);
+        return mapper.toReviewDto(savedReview);
     }
 
     public void deleteById(String id) {
@@ -49,12 +69,13 @@ public class ReviewService {
         return reviewRepository.existsById(id);
     }
 
-    public Optional<Review> verifyReview(String id) {
+    public Optional<ReviewDTO> verifyReview(String id) {
         Optional<Review> optionalReview = reviewRepository.findById(id);
         if (optionalReview.isPresent()) {
             Review review = optionalReview.get();
             review.setVerified(true);
-            return Optional.of(reviewRepository.save(review));
+            Review savedReview = reviewRepository.save(review);
+            return Optional.of(mapper.toReviewDto(savedReview));
         }
         return Optional.empty();
     }

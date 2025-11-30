@@ -2,31 +2,42 @@ package com.gameart.backend.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.gameart.backend.dto.GameDTO;
 import com.gameart.backend.entity.Game;
+import com.gameart.backend.mapper.GlobalMapper;
 import com.gameart.backend.repository.GameRepository;
 
 @Service
 public class GameService {
 
     private final GameRepository gameRepository;
+    private final GlobalMapper mapper;
 
-    public GameService(GameRepository gameRepository) {
+    public GameService(GameRepository gameRepository, GlobalMapper mapper) {
         this.gameRepository = gameRepository;
+        this.mapper = mapper;
     }
 
-    public List<Game> findAll() {
-        return gameRepository.findAll();
+    public List<GameDTO> findAll() {
+        return gameRepository.findAll()
+                .stream()
+                .map(mapper::toGameDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Game> findById(String id) {
-        return gameRepository.findById(id);
+    public Optional<GameDTO> findById(String id) {
+        return gameRepository.findById(id)
+                .map(mapper::toGameDto);
     }
 
-    public Game save(Game game) {
-        return gameRepository.save(game);
+    public GameDTO save(GameDTO gameDTO) {
+        Game game = mapper.toGameEntity(gameDTO);
+        Game savedGame = gameRepository.save(game);
+        return mapper.toGameDto(savedGame);
     }
 
     public void deleteById(String id) {
@@ -37,27 +48,45 @@ public class GameService {
         return gameRepository.existsById(id);
     }
 
-    public List<Game> findByPlatform(String platform) {
-        return gameRepository.findByPlatform(platform);
+    public List<GameDTO> findByPlatform(String platform) {
+        return gameRepository.findByPlatform(platform)
+                .stream()
+                .map(mapper::toGameDto)
+                .collect(Collectors.toList());
     }
 
-    public List<Game> findByGenre(String genre) {
-        return gameRepository.findByGenre(genre);
+    public List<GameDTO> findByGenre(String genre) {
+        return gameRepository.findByGenre(genre)
+                .stream()
+                .map(mapper::toGameDto)
+                .collect(Collectors.toList());
     }
 
-    public List<Game> findByPromoTrue() {
-        return gameRepository.findByPromoTrue();
+    public List<GameDTO> findByPromoTrue() {
+        return gameRepository.findByPromoTrue()
+                .stream()
+                .map(mapper::toGameDto)
+                .collect(Collectors.toList());
     }
 
-    public List<Game> findByPopularTrue() {
-        return gameRepository.findByPopularTrue();
+    public List<GameDTO> findByPopularTrue() {
+        return gameRepository.findByPopularTrue()
+                .stream()
+                .map(mapper::toGameDto)
+                .collect(Collectors.toList());
     }
 
-    public List<Game> searchGames(String search) {
-        return gameRepository.searchGames(search);
+    public List<GameDTO> searchGames(String search) {
+        return gameRepository.searchGames(search)
+                .stream()
+                .map(mapper::toGameDto)
+                .collect(Collectors.toList());
     }
 
-    public List<Game> findByTag(String tag) {
-        return gameRepository.findByTagsContaining(tag);
+    public List<GameDTO> findByTag(String tag) {
+        return gameRepository.findByTagsContaining(tag)
+                .stream()
+                .map(mapper::toGameDto)
+                .collect(Collectors.toList());
     }
 }

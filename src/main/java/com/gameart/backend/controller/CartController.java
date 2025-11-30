@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gameart.backend.entity.Cart;
+import com.gameart.backend.dto.ApiResponse;
+import com.gameart.backend.dto.CartDTO;
 import com.gameart.backend.service.CartService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/cart")
@@ -32,52 +34,52 @@ public class CartController {
 
     @GetMapping
     @Operation(summary = "Obtenir tous les éléments du panier")
-    public List<Cart> getAllCartItems() {
-        return cartService.findAll();
+    public ApiResponse<List<CartDTO>> getAllCartItems() {
+        List<CartDTO> cartItems = cartService.findAll();
+        return ApiResponse.success("Éléments du panier récupérés avec succès", cartItems);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtenir un élément du panier par son ID")
-    public ResponseEntity<Cart> getCartItemById(@PathVariable Long id) {
-        Optional<Cart> cartItem = cartService.findById(id);
-        return cartItem.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ApiResponse<CartDTO>> getCartItemById(@PathVariable Long id) {
+        Optional<CartDTO> cartItem = cartService.findById(id);
+        return cartItem.map(item -> ResponseEntity.ok(ApiResponse.success("Élément du panier trouvé", item)))
+                      .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     @Operation(summary = "Ajouter un élément au panier")
-    public Cart addToCart(@RequestBody Cart cartItem) {
-        return cartService.save(cartItem);
+    public ApiResponse<CartDTO> addToCart(@Valid @RequestBody CartDTO cartDTO) {
+        CartDTO savedCartItem = cartService.save(cartDTO);
+        return ApiResponse.success("Élément ajouté au panier avec succès", savedCartItem);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Mettre à jour un élément du panier")
-    public ResponseEntity<Cart> updateCartItem(@PathVariable Long id, @RequestBody Cart cartDetails) {
-        Optional<Cart> optionalCart = cartService.findById(id);
-        if (optionalCart.isPresent()) {
-            Cart cart = optionalCart.get();
-            cart.setGame(cartDetails.getGame());
-            cart.setQuantity(cartDetails.getQuantity());
-            cart.setSubtotal(cartDetails.getSubtotal());
-            cart.setCreatedAt(cartDetails.getCreatedAt());
-            return ResponseEntity.ok(cartService.save(cart));
+    public ResponseEntity<ApiResponse<CartDTO>> updateCartItem(@PathVariable Long id, @Valid @RequestBody CartDTO cartDetails) {
+        if (!cartService.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        
+        cartDetails.setId(id);
+        CartDTO updatedCartItem = cartService.save(cartDetails);
+        return ResponseEntity.ok(ApiResponse.success("Élément du panier mis à jour avec succès", updatedCartItem));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Supprimer un élément du panier")
-    public ResponseEntity<Void> removeFromCart(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> removeFromCart(@PathVariable Long id) {
         if (cartService.existsById(id)) {
             cartService.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(ApiResponse.success("Élément supprimé du panier avec succès", null));
         }
         return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping
     @Operation(summary = "Vider tout le panier")
-    public ResponseEntity<Void> clearCart() {
+    public ApiResponse<Void> clearCart() {
         cartService.deleteAll();
-        return ResponseEntity.ok().build();
+        return ApiResponse.success("Panier vidé avec succès", null);
     }
 }
