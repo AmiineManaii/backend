@@ -35,14 +35,14 @@ public class ReviewService {
     }
 
     public List<ReviewDTO> findByGameId(String gameId) {
-        return reviewRepository.findByGameId(gameId)
+        return reviewRepository.GetByGameId(gameId)
                 .stream()
                 .map(mapper::toReviewDto)
                 .collect(Collectors.toList());
     }
 
     public List<ReviewDTO> findByUserId(String userId) {
-        return reviewRepository.findByUserId(userId)
+        return reviewRepository.GetByUserId(userId)
                 .stream()
                 .map(mapper::toReviewDto)
                 .collect(Collectors.toList());

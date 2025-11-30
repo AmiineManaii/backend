@@ -25,24 +25,24 @@ public class UserService {
     public List<UserDTO> findAll() {
         return userRepository.findAll()
                 .stream()
-                .map(mapper::toSecureUserDto) 
+                .map(mapper::toUserDto) 
                 .collect(Collectors.toList());
     }
 
     public Optional<UserDTO> findById(String id) {
         return userRepository.findById(id)
-                .map(mapper::toSecureUserDto);
+                .map(mapper::toUserDto);
     }
 
     public Optional<UserDTO> findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .map(mapper::toSecureUserDto);
+                .map(mapper::toUserDto);
     }
 
     public UserDTO save(UserDTO userDTO) {
         User user = mapper.toUserEntity(userDTO);
         User savedUser = userRepository.save(user);
-        return mapper.toSecureUserDto(savedUser);
+        return mapper.toUserDto(savedUser);
     }
 
     public void deleteById(String id) {
@@ -64,9 +64,9 @@ public class UserService {
             if (!user.getWishlist().contains(gameId)) {
                 user.getWishlist().add(gameId);
                 User savedUser = userRepository.save(user);
-                return Optional.of(mapper.toSecureUserDto(savedUser));
+                return Optional.of(mapper.toUserDto(savedUser));
             }
-            return Optional.of(mapper.toSecureUserDto(user));
+            return Optional.of(mapper.toUserDto(user));
         }
         return Optional.empty();
     }
@@ -77,7 +77,7 @@ public class UserService {
             User user = optionalUser.get();
             user.getWishlist().remove(gameId);
             User savedUser = userRepository.save(user);
-            return Optional.of(mapper.toSecureUserDto(savedUser));
+            return Optional.of(mapper.toUserDto(savedUser));
         }
         return Optional.empty();
     }

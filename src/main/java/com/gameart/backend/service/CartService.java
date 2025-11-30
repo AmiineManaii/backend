@@ -51,4 +51,22 @@ public class CartService {
     public boolean existsById(Long id) {
         return cartRepository.existsById(id);
     }
+    public void deleteAllBySessionID(String sessionID) {
+        cartRepository.deleteAllBySessionID(sessionID);
+    }
+    public void deleteAllByUserId(String userId) {
+        cartRepository.deleteAllByUserId(userId);
+    }
+    public List<CartDTO> getCartBySessionID(String sessionID) {
+        return cartRepository.getCartBySessionID(sessionID)
+                 .stream()
+                 .map(mapper::toCartDto)
+                 .collect(Collectors.toList());
+    }
+    public List<CartDTO> getCartByUserId(String userId) {
+        return cartRepository.getCartByUserId(userId)
+                 .stream()
+                 .map(mapper::toCartDto)
+                 .collect(Collectors.toList());
+    }
 }

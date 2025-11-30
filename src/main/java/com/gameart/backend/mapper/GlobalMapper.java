@@ -54,9 +54,7 @@ public class GlobalMapper {
         return userMapper.toEntity(dto);
     }
 
-    public UserDTO toSecureUserDto(User user) {
-        return userMapper.toSecureDto(user);
-    }
+    
 
    
     public OrderDTO toOrderDto(Order order) {

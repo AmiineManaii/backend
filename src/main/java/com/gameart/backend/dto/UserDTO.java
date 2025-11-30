@@ -1,6 +1,7 @@
 package com.gameart.backend.dto;
 
 import java.util.List;
+import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -11,12 +12,9 @@ import jakarta.validation.constraints.Size;
 public class UserDTO {
     
     @Schema(description = "ID de l'utilisateur", example = "1")
+    
     private String id;
 
-    @NotBlank(message = "Le nom est obligatoire")
-    @Size(min = 2, max = 100, message = "Le nom doit contenir entre 2 et 100 caractères")
-    @Schema(description = "Nom d'utilisateur", example = "Amine")
-    private String name;
 
     @NotBlank(message = "L'email est obligatoire")
     @Email(message = "L'email doit être valide")
@@ -40,12 +38,25 @@ public class UserDTO {
     private List<String> wishlist;
 
 
-    public UserDTO() {}
+    public UserDTO() {
+        
+        this.id = UUID.randomUUID().toString();
+    }
+
+    public UserDTO(String name, String email, String password, 
+                   String nom, String prenom, String adresse, List<String> wishlist) {
+        this();
+        this.email = email;
+        this.password = password;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.adresse = adresse;
+        this.wishlist = wishlist;
+    }
 
     public UserDTO(String id, String name, String email, String password, 
                    String nom, String prenom, String adresse, List<String> wishlist) {
         this.id = id;
-        this.name = name;
         this.email = email;
         this.password = password;
         this.nom = nom;
@@ -57,8 +68,7 @@ public class UserDTO {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

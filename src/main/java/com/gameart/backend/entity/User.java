@@ -17,10 +17,9 @@ import jakarta.validation.constraints.NotBlank;
 @Table(name = "users")
 public class User {
     @Id
+
     private String id;
 
-    @NotBlank
-    private String name;
 
     @NotBlank
     @Email
@@ -38,13 +37,12 @@ public class User {
     @CollectionTable(name = "user_wishlist", joinColumns = @JoinColumn(name = "user_id"))
     private List<String> wishlist = new ArrayList<>();
 
-    // Constructeurs
+
     public User() {}
 
-    public User(String id, String name, String email, String password, 
+    public User(String id, String email, String password, 
                 String nom, String prenom, String adresse) {
         this.id = id;
-        this.name = name;
         this.email = email;
         this.password = password;
         this.nom = nom;
@@ -55,9 +53,6 @@ public class User {
     
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

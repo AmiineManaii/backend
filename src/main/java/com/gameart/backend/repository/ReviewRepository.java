@@ -9,7 +9,7 @@ import com.gameart.backend.entity.Review;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, String> {
-    List<Review> findByGameId(String gameId);
-    List<Review> findByUserId(String userId);
+    List<Review> GetByGameId(String gameId);
+    List<Review> GetByUserId(String userId);
     List<Review> findByVerifiedTrue();
 }

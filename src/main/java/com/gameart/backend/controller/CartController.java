@@ -82,4 +82,30 @@ public class CartController {
         cartService.deleteAll();
         return ApiResponse.success("Panier vidé avec succès", null);
     }
+    @GetMapping("/user/{userId}")
+    @Operation(summary = "Obtenir tous les éléments du panier d'un utilisateur")
+    public ApiResponse<List<CartDTO>> getCartItemsByUserId(@PathVariable String userId) {
+        List<CartDTO> cartItems = cartService.getCartByUserId(userId);
+        return ApiResponse.success("Éléments du panier de l'utilisateur récupérés avec succès", cartItems);
+    }
+    @DeleteMapping("/user/{userId}")
+    @Operation(summary = "Supprimer tous les éléments du panier d'un utilisateur")
+    public ResponseEntity<ApiResponse<Void>> removeCartItemsByUserId(@PathVariable String userId) {
+        cartService.deleteAllByUserId(userId);
+        return ResponseEntity.ok(ApiResponse.success("Éléments du panier de l'utilisateur supprimés avec succès", null));
+    }
+    
+    @DeleteMapping("/session/{sessionID}")
+    @Operation(summary = "Supprimer tous les éléments du panier d'une session")
+    public ResponseEntity<ApiResponse<Void>> removeCartItemsBySessionID(@PathVariable String sessionID) {
+        cartService.deleteAllBySessionID(sessionID);
+        return ResponseEntity.ok(ApiResponse.success("Éléments du panier de la session supprimés avec succès", null));
+    }
+    @GetMapping("/session/{sessionID}")
+    @Operation(summary = "Obtenir tous les éléments du panier d'une session")
+    public ApiResponse<List<CartDTO>> getCartItemsBySessionID(@PathVariable String sessionID) {
+        List<CartDTO> cartItems = cartService.getCartBySessionID(sessionID);
+        return ApiResponse.success("Éléments du panier de la session récupérés avec succès", cartItems);
+    }
+
 }

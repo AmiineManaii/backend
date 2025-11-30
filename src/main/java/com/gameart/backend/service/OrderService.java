@@ -35,7 +35,7 @@ public class OrderService {
     }
 
     public List<OrderDTO> findByUserId(String userId) {
-        return orderRepository.findByUserId(userId)
+        return orderRepository.getByUserId(userId)
                 .stream()
                 .map(mapper::toOrderDto)
                 .collect(Collectors.toList());

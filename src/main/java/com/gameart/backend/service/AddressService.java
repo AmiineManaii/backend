@@ -35,7 +35,7 @@ public class AddressService {
     }
 
     public List<AddressDTO> findByUserId(String userId) {
-        return addressRepository.findByUserId(userId)
+        return addressRepository.getByUserId(userId)
                 .stream()
                 .map(mapper::toAddressDto)
                 .collect(Collectors.toList());
@@ -61,7 +61,7 @@ public class AddressService {
             Address address = optionalAddress.get();
             
           
-            List<Address> userAddresses = addressRepository.findByUserId(address.getUserId());
+            List<Address> userAddresses = addressRepository.getByUserId(address.getUser().getId());
             for (Address addr : userAddresses) {
                 if (addr.getIsDefault() != null && addr.getIsDefault()) {
                     addr.setIsDefault(false);
@@ -76,4 +76,5 @@ public class AddressService {
         }
         return Optional.empty();
     }
+    
 }

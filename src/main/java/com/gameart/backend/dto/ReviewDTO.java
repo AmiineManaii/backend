@@ -2,6 +2,9 @@ package com.gameart.backend.dto;
 
 import java.time.LocalDateTime;
 
+import com.gameart.backend.entity.Game;
+import com.gameart.backend.entity.User;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -17,11 +20,11 @@ public class ReviewDTO {
 
     @NotBlank(message = "L'ID du jeu est obligatoire")
     @Schema(description = "ID du jeu", example = "1")
-    private String gameId;
+    private Game game;
 
     @NotBlank(message = "L'ID utilisateur est obligatoire")
     @Schema(description = "ID de l'utilisateur", example = "1")
-    private String userId;
+    private User user;
 
     @NotBlank(message = "Le message est obligatoire")
     @Size(max = 500, message = "Le message ne peut pas dépasser 500 caractères")
@@ -43,11 +46,11 @@ public class ReviewDTO {
    
     public ReviewDTO() {}
 
-    public ReviewDTO(String id, String gameId, String userId, String msg, 
+    public ReviewDTO(String id, Game game, User user, String msg, 
                      Integer note, LocalDateTime date, Boolean verified) {
         this.id = id;
-        this.gameId = gameId;
-        this.userId = userId;
+        this.game = game;
+        this.user = user;
         this.msg = msg;
         this.note = note;
         this.date = date;
@@ -58,11 +61,11 @@ public class ReviewDTO {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public String getGameId() { return gameId; }
-    public void setGameId(String gameId) { this.gameId = gameId; }
+    public Game getGame() { return game; }
+    public void setGame(Game game) { this.game = game; }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
     public String getMsg() { return msg; }
     public void setMsg(String msg) { this.msg = msg; }

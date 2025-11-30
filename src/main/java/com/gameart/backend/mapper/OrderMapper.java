@@ -19,7 +19,7 @@ public class OrderMapper {
 
         OrderDTO dto = new OrderDTO();
         dto.setId(order.getId());
-        dto.setUserId(order.getUserId());
+        dto.setUser(order.getUser());
         dto.setDate(order.getDate());
         dto.setTotal(order.getTotal());
         dto.setStatus(order.getStatus());
@@ -42,7 +42,7 @@ public class OrderMapper {
 
         Order order = new Order();
         order.setId(dto.getId());
-        order.setUserId(dto.getUserId());
+        order.setUser(dto.getUser());
         order.setDate(dto.getDate());
         order.setTotal(dto.getTotal());
         order.setStatus(dto.getStatus());

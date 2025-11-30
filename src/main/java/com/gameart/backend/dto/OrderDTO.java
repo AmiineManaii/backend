@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import com.gameart.backend.entity.User;
 
 @Schema(description = "DTO pour les commandes")
 public class OrderDTO {
@@ -16,7 +17,7 @@ public class OrderDTO {
 
     @NotBlank(message = "L'ID utilisateur est obligatoire")
     @Schema(description = "ID de l'utilisateur", example = "1")
-    private String userId;
+    private User user;
 
     @NotNull(message = "La date est obligatoire")
     @Schema(description = "Date de la commande")
@@ -40,10 +41,10 @@ public class OrderDTO {
     // Constructeurs
     public OrderDTO() {}
 
-    public OrderDTO(Long id, String userId, LocalDateTime date, List<OrderItemDTO> items, 
+    public OrderDTO(Long id, User user, LocalDateTime date, List<OrderItemDTO> items, 
                     Double total, String status, String addressId) {
         this.id = id;
-        this.userId = userId;
+        this.user = user;
         this.date = date;
         this.items = items;
         this.total = total;
@@ -55,8 +56,8 @@ public class OrderDTO {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
     public LocalDateTime getDate() { return date; }
     public void setDate(LocalDateTime date) { this.date = date; }

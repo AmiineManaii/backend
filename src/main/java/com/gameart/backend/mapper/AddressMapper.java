@@ -20,7 +20,7 @@ public class AddressMapper {
         dto.setVille(address.getVille());
         dto.setCodePostal(address.getCodePostal());
         dto.setPays(address.getPays());
-        dto.setUserId(address.getUserId());
+        dto.setUser(address.getUser());
         dto.setIsDefault(address.getIsDefault());
         
         return dto;
@@ -38,7 +38,7 @@ public class AddressMapper {
         address.setVille(dto.getVille());
         address.setCodePostal(dto.getCodePostal());
         address.setPays(dto.getPays());
-        address.setUserId(dto.getUserId());
+        address.setUser(dto.getUser());
         address.setIsDefault(dto.getIsDefault());
         
         return address;

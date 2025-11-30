@@ -15,8 +15,8 @@ public class ReviewMapper {
 
         ReviewDTO dto = new ReviewDTO();
         dto.setId(review.getId());
-        dto.setGameId(review.getGameId());
-        dto.setUserId(review.getUserId());
+        dto.setGame(review.getGame());
+        dto.setUser(review.getUser());
         dto.setMsg(review.getMsg());
         dto.setNote(review.getNote());
         dto.setDate(review.getDate());
@@ -32,8 +32,8 @@ public class ReviewMapper {
 
         Review review = new Review();
         review.setId(dto.getId());
-        review.setGameId(dto.getGameId());
-        review.setUserId(dto.getUserId());
+        review.setGame(dto.getGame());
+        review.setUser(dto.getUser());
         review.setMsg(dto.getMsg());
         review.setNote(dto.getNote());
         review.setDate(dto.getDate());

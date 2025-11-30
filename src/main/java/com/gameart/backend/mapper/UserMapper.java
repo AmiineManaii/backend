@@ -16,9 +16,8 @@ public class UserMapper {
 
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
-        dto.setName(user.getName());
         dto.setEmail(user.getEmail());
-        //dto.setPassword(user.getPassword()); 
+        dto.setPassword(user.getPassword()); 
         dto.setNom(user.getNom());
         dto.setPrenom(user.getPrenom());
         dto.setAdresse(user.getAdresse());
@@ -34,7 +33,7 @@ public class UserMapper {
 
         User user = new User();
         user.setId(dto.getId());
-        user.setName(dto.getName());
+        
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
         user.setNom(dto.getNom());
@@ -69,21 +68,4 @@ public class UserMapper {
         return user;
     }
 
-     public UserDTO toSecureDto(User user) {
-        if (user == null) {
-            return null;
-        }
-
-        UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
-        dto.setName(user.getName());
-        dto.setEmail(user.getEmail());
-        dto.setNom(user.getNom());
-        dto.setPrenom(user.getPrenom());
-        dto.setAdresse(user.getAdresse());
-        dto.setWishlist(user.getWishlist());
-        
-        
-        return dto;
-    }
-}
+     }
