@@ -49,7 +49,7 @@ public class ReviewService {
     }
 
     public List<ReviewDTO> findByVerifiedTrue() {
-        return reviewRepository.findByVerifiedTrue()
+        return reviewRepository.GetVerifiedReviews()
                 .stream()
                 .map(mapper::toReviewDto)
                 .collect(Collectors.toList());
