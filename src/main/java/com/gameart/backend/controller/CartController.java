@@ -107,5 +107,11 @@ public class CartController {
         List<CartDTO> cartItems = cartService.getCartBySessionID(sessionID);
         return ApiResponse.success("Éléments du panier de la session récupérés avec succès", cartItems);
     }
+    @PostMapping("/session/{sessionID}")
+    @Operation(summary = "Ajouter un élément au panier d'une session")
+    public ApiResponse<CartDTO> addToCartSession(@PathVariable String sessionID, @Valid @RequestBody CartDTO cartDTO) {
+        CartDTO savedCartItem = cartService.saveSessionCart(sessionID, cartDTO);
+        return ApiResponse.success("Élément ajouté au panier de la session avec succès", savedCartItem);
+    }
 
 }

@@ -69,4 +69,10 @@ public class CartService {
                  .map(mapper::toCartDto)
                  .collect(Collectors.toList());
     }
+    public CartDTO saveSessionCart(String sessionID, CartDTO cartDTO) {
+        Cart cart = mapper.toCartEntity(cartDTO);
+        cart.setSessionID(sessionID);
+        Cart savedCart = cartRepository.save(cart);
+        return mapper.toCartDto(savedCart);
+    }
 }

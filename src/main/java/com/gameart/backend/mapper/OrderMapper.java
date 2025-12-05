@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.gameart.backend.dto.OrderDTO;
 import com.gameart.backend.dto.OrderItemDTO;
+import com.gameart.backend.entity.Address;
 import com.gameart.backend.entity.Order;
 import com.gameart.backend.entity.OrderItem;
 import com.gameart.backend.entity.User;
@@ -21,12 +22,12 @@ public class OrderMapper {
         }
 
         OrderDTO dto = new OrderDTO();
-        dto.setId(order.getId());
-        dto.setUserId(order.getUser().getId());
+        dto.setId(order.getId().toString());
+        dto.setUserId(order.getUser().getId().toString());
         dto.setDate(order.getDate());
         dto.setTotal(order.getTotal());
         dto.setStatus(order.getStatus());
-        dto.setAddressId(order.getAddressId());
+        dto.setAddressId(order.getAddress().getId());
         
         
         if (order.getItems() != null) {
@@ -48,7 +49,12 @@ public class OrderMapper {
         order.setDate(dto.getDate());
         order.setTotal(dto.getTotal());
         order.setStatus(dto.getStatus());
-        order.setAddressId(dto.getAddressId());
+        if(dto.getAddressId() != null) {
+            Address address=new Address();
+            address.setId(dto.getAddressId());
+            order.setAddress(address);
+            
+        }
         
     
         if (dto.getItems() != null) {

@@ -1,7 +1,6 @@
 package com.gameart.backend.mapper;
 
 import org.springframework.stereotype.Component;
-
 import com.gameart.backend.dto.CartDTO;
 import com.gameart.backend.entity.Cart;
 import com.gameart.backend.entity.Game;
@@ -26,9 +25,14 @@ public class CartMapper {
         dto.setQuantity(cart.getQuantity());
         dto.setSubtotal(cart.getSubtotal());
         dto.setCreatedAt(cart.getCreatedAt());
-        dto.setUserId(cart.getUser().getId());
         dto.setSessionId(cart.getSessionID());
         
+        // Vérifier si l'utilisateur n'est pas null avant d'accéder à son ID
+        if (cart.getUser() != null) {
+            dto.setUserId(cart.getUser().getId());
+        } else {
+            dto.setUserId(null); // Explicitement null pour les invités
+        }
         
         if (cart.getGame() != null) {
             dto.setGameId(cart.getGame().getId());
@@ -49,20 +53,21 @@ public class CartMapper {
         cart.setCreatedAt(dto.getCreatedAt());
         cart.setSessionID(dto.getSessionId());
         
-        
         if (dto.getGameId() != null) {
-
             Game game = new Game();
             game.setId(dto.getGameId());
             cart.setGame(game);
         }
-        if(dto.getUserId() != null) {
+        
+        // Ne définir l'utilisateur que si userId n'est pas null
+        if (dto.getUserId() != null) {
             User user = new User();
             user.setId(dto.getUserId());
             cart.setUser(user);
+        } else {
+            cart.setUser(null); // Explicitement null pour les invités
         }
         
         return cart;
     }
-
-    }
+}

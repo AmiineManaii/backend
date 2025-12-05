@@ -5,23 +5,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 
 @Entity
 @Table(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
 
     @ManyToOne
@@ -37,15 +37,15 @@ public class Order {
     private Double total;
     private String status;
 
-    @Column(name = "address_id")
-    private String addressId;
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
 
   
     public Order() {}
 
-   
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
@@ -62,7 +62,7 @@ public class Order {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public String getAddressId() { return addressId; }
-    public void setAddressId(String addressId) { this.addressId = addressId; }
+    public Address getAddress() { return address; }
+    public void setAddress(Address address) { this.address = address; }
 }
 

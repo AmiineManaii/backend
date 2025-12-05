@@ -17,7 +17,7 @@ public class CartDTO {
     @Schema(description = "ID du jeu dans le panier", example = "12345")
     private String gameId;
 
-    @NotBlank(message="l'utilisateur est obligatoire")
+    
     @Schema(description = "ID de l'utilisateur", example = "12345")
     private String userId;
 

@@ -29,7 +29,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<OrderDTO> findById(Long id) {
+    public Optional<OrderDTO> findById(String id) {
         return orderRepository.findById(id)
                 .map(mapper::toOrderDto);
     }
@@ -47,15 +47,15 @@ public class OrderService {
         return mapper.toOrderDto(savedOrder);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         orderRepository.deleteById(id);
     }
 
-    public boolean existsById(Long id) {
+    public boolean existsById(String id) {
         return orderRepository.existsById(id);
     }
 
-    public Optional<OrderDTO> updateStatus(Long id, String status) {
+    public Optional<OrderDTO> updateStatus(String id, String status) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();

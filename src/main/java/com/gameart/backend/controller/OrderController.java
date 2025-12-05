@@ -42,7 +42,7 @@ public class OrderController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtenir une commande par son ID")
-    public ResponseEntity<ApiResponse<OrderDTO>> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<OrderDTO>> getOrderById(@PathVariable String id) {
         Optional<OrderDTO> order = orderService.findById(id);
         return order.map(o -> ResponseEntity.ok(ApiResponse.success("Commande trouvée", o)))
                    .orElse(ResponseEntity.notFound().build());
@@ -64,19 +64,19 @@ public class OrderController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Mettre à jour une commande")
-    public ResponseEntity<ApiResponse<OrderDTO>> updateOrder(@PathVariable Long id, @Valid @RequestBody OrderDTO orderDetails) {
+    public ResponseEntity<ApiResponse<OrderDTO>> updateOrder(@PathVariable String id, @Valid @RequestBody OrderDTO orderDetails) {
         if (!orderService.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         
-        orderDetails.setId(id);
+        orderDetails.setId(id.toString());
         OrderDTO updatedOrder = orderService.save(orderDetails);
         return ResponseEntity.ok(ApiResponse.success("Commande mise à jour avec succès", updatedOrder));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Supprimer une commande")
-    public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable String id) {
         if (orderService.existsById(id)) {
             orderService.deleteById(id);
             return ResponseEntity.ok(ApiResponse.success("Commande supprimée avec succès", null));
@@ -86,7 +86,7 @@ public class OrderController {
 
     @PatchMapping("/{id}/status")
     @Operation(summary = "Mettre à jour le statut d'une commande")
-    public ResponseEntity<ApiResponse<OrderDTO>> updateOrderStatus(@PathVariable Long id, @RequestBody String status) {
+    public ResponseEntity<ApiResponse<OrderDTO>> updateOrderStatus(@PathVariable String id, @RequestBody String status) {
         Optional<OrderDTO> order = orderService.updateStatus(id, status);
         return order.map(o -> ResponseEntity.ok(ApiResponse.success("Statut de la commande mis à jour", o)))
                    .orElse(ResponseEntity.notFound().build());
