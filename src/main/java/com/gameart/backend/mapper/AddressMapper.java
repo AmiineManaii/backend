@@ -3,7 +3,7 @@ package com.gameart.backend.mapper;
 import org.springframework.stereotype.Component;
 
 import com.gameart.backend.dto.AddressDTO;
-import com.gameart.backend.entity.Address;
+import com.gameart.backend.entity.*;
 
 @Component
 public class AddressMapper {
@@ -20,7 +20,7 @@ public class AddressMapper {
         dto.setVille(address.getVille());
         dto.setCodePostal(address.getCodePostal());
         dto.setPays(address.getPays());
-        dto.setUser(address.getUser());
+        dto.setUserId(address.getUser().getId());
         dto.setIsDefault(address.getIsDefault());
         
         return dto;
@@ -30,6 +30,8 @@ public class AddressMapper {
         if (dto == null) {
             return null;
         }
+        User user = new User();
+        user.setId(dto.getUserId());
 
         Address address = new Address();
         address.setId(dto.getId());
@@ -38,10 +40,10 @@ public class AddressMapper {
         address.setVille(dto.getVille());
         address.setCodePostal(dto.getCodePostal());
         address.setPays(dto.getPays());
-        address.setUser(dto.getUser());
+        address.setUser(user);
         address.setIsDefault(dto.getIsDefault());
         
         return address;
     }
 
-  }
+}

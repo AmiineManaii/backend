@@ -1,7 +1,5 @@
 package com.gameart.backend.dto;
 
-import com.gameart.backend.entity.User;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
@@ -32,9 +30,9 @@ public class AddressDTO {
     @Schema(description = "Pays", example = "tunisie")
     private String pays;
 
-    @NotBlank(message = "L'ID utilisateur est obligatoire")
+    @NotBlank(message = "L'utilisateur est obligatoire")
     @Schema(description = "ID de l'utilisateur", example = "1")
-    private User user;
+    private String userId;
 
     @Schema(description = "Indique si c'est l'adresse par défaut", example = "true")
     private Boolean isDefault;
@@ -43,14 +41,14 @@ public class AddressDTO {
     public AddressDTO() {}
 
     public AddressDTO(String id, String nom, String rue, String ville, 
-                      String codePostal, String pays, User user, Boolean isDefault) {
+                      String codePostal, String pays, String userId, Boolean isDefault) {
         this.id = id;
         this.nom = nom;
         this.rue = rue;
         this.ville = ville;
         this.codePostal = codePostal;
         this.pays = pays;
-        this.user = user;
+        this.userId = userId;
         this.isDefault = isDefault;
     }
 
@@ -73,8 +71,8 @@ public class AddressDTO {
     public String getPays() { return pays; }
     public void setPays(String pays) { this.pays = pays; }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
     public Boolean getIsDefault() { return isDefault; }
     public void setIsDefault(Boolean isDefault) { this.isDefault = isDefault; }

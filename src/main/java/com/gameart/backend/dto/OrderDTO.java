@@ -17,7 +17,7 @@ public class OrderDTO {
 
     @NotBlank(message = "L'ID utilisateur est obligatoire")
     @Schema(description = "ID de l'utilisateur", example = "1")
-    private User user;
+    private String userId;
 
     @NotNull(message = "La date est obligatoire")
     @Schema(description = "Date de la commande")
@@ -41,10 +41,10 @@ public class OrderDTO {
     // Constructeurs
     public OrderDTO() {}
 
-    public OrderDTO(Long id, User user, LocalDateTime date, List<OrderItemDTO> items, 
+    public OrderDTO(Long id, String userId, LocalDateTime date, List<OrderItemDTO> items, 
                     Double total, String status, String addressId) {
         this.id = id;
-        this.user = user;
+        this.userId = userId;
         this.date = date;
         this.items = items;
         this.total = total;
@@ -56,8 +56,8 @@ public class OrderDTO {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
     public LocalDateTime getDate() { return date; }
     public void setDate(LocalDateTime date) { this.date = date; }

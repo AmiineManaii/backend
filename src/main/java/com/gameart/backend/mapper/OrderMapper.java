@@ -8,6 +8,9 @@ import com.gameart.backend.dto.OrderDTO;
 import com.gameart.backend.dto.OrderItemDTO;
 import com.gameart.backend.entity.Order;
 import com.gameart.backend.entity.OrderItem;
+import com.gameart.backend.entity.User;
+
+
 
 @Component
 public class OrderMapper {
@@ -19,7 +22,7 @@ public class OrderMapper {
 
         OrderDTO dto = new OrderDTO();
         dto.setId(order.getId());
-        dto.setUser(order.getUser());
+        dto.setUserId(order.getUser().getId());
         dto.setDate(order.getDate());
         dto.setTotal(order.getTotal());
         dto.setStatus(order.getStatus());
@@ -42,7 +45,6 @@ public class OrderMapper {
 
         Order order = new Order();
         order.setId(dto.getId());
-        order.setUser(dto.getUser());
         order.setDate(dto.getDate());
         order.setTotal(dto.getTotal());
         order.setStatus(dto.getStatus());
@@ -53,6 +55,11 @@ public class OrderMapper {
             order.setItems(dto.getItems().stream()
                     .map(this::toItemEntity)
                     .collect(Collectors.toList()));
+        }
+        if(dto.getUserId() != null) {
+            User user=new User();
+            user.setId(dto.getUserId());
+            order.setUser(user);
         }
         
         return order;

@@ -43,16 +43,22 @@ public class UserController {
     @Operation(summary = "Obtenir un utilisateur par son ID")
     public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable String id) {
         Optional<UserDTO> user = userService.findById(id);
-        return user.map(u -> ResponseEntity.ok(ApiResponse.success("Utilisateur trouvé", u)))
-                  .orElse(ResponseEntity.notFound().build());
+        return user.map(u -> {
+            u.setPassword(null); // Ne pas renvoyer le mot de passe
+            return ResponseEntity.ok(ApiResponse.success("Utilisateur trouvé", u));
+        })
+        .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/email/{email}")
     @Operation(summary = "Obtenir un utilisateur par email")
     public ResponseEntity<ApiResponse<UserDTO>> getUserByEmail(@PathVariable String email) {
         Optional<UserDTO> user = userService.findByEmail(email);
-        return user.map(u -> ResponseEntity.ok(ApiResponse.success("Utilisateur trouvé", u)))
-                  .orElse(ResponseEntity.notFound().build());
+        return user.map(u -> {
+            u.setPassword(null); // Ne pas renvoyer le mot de passe
+            return ResponseEntity.ok(ApiResponse.success("Utilisateur trouvé", u));
+        })
+        .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -103,4 +109,5 @@ public class UserController {
         return user.map(u -> ResponseEntity.ok(ApiResponse.success("Jeu retiré de la wishlist", u)))
                   .orElse(ResponseEntity.notFound().build());
     }
+    
 }

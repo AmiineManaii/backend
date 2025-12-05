@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import com.gameart.backend.dto.CartDTO;
 import com.gameart.backend.entity.Cart;
 import com.gameart.backend.entity.Game;
+import com.gameart.backend.entity.User;
 
 @Component
 public class CartMapper {
@@ -25,10 +26,12 @@ public class CartMapper {
         dto.setQuantity(cart.getQuantity());
         dto.setSubtotal(cart.getSubtotal());
         dto.setCreatedAt(cart.getCreatedAt());
+        dto.setUserId(cart.getUser().getId());
+        dto.setSessionId(cart.getSessionID());
         
         
         if (cart.getGame() != null) {
-            dto.setGame(gameMapper.toDto(cart.getGame()));
+            dto.setGameId(cart.getGame().getId());
         }
         
         return dto;
@@ -44,11 +47,19 @@ public class CartMapper {
         cart.setQuantity(dto.getQuantity());
         cart.setSubtotal(dto.getSubtotal());
         cart.setCreatedAt(dto.getCreatedAt());
+        cart.setSessionID(dto.getSessionId());
         
         
-        if (dto.getGame() != null) {
-            Game game = gameMapper.toEntity(dto.getGame());
+        if (dto.getGameId() != null) {
+
+            Game game = new Game();
+            game.setId(dto.getGameId());
             cart.setGame(game);
+        }
+        if(dto.getUserId() != null) {
+            User user = new User();
+            user.setId(dto.getUserId());
+            cart.setUser(user);
         }
         
         return cart;
