@@ -40,7 +40,8 @@ public class SecurityConfig {
                     "/error",              // Gestion des erreurs
                     "/cart/session/**",    // Panier pour invités
                     "/cart",               // Panier (GET pour invités)
-                    "/reviews/game/**"     // Avis des jeux (public)
+                    "/reviews/game/**",     // Avis des jeux (public)
+                    "/swagger-ui.html"    // Interface Swagger
                 ).permitAll()
                 
                 // Toutes les autres routes nécessitent une authentification

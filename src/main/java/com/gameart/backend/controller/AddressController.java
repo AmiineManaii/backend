@@ -19,12 +19,14 @@ import com.gameart.backend.dto.ApiResponse;
 import com.gameart.backend.service.AddressService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/addresses")
 @Tag(name = "Addresses", description = "API de gestion des adresses")
+@SecurityRequirement(name = "bearerAuth")
 public class AddressController {
 
     private final AddressService addressService;
